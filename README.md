@@ -25,10 +25,10 @@ Koishi 实例内：
 
 ```powershell
 cd C:\Users\MECHREV\AppData\Roaming\Koishi\Desktop\data\instances\default
-npm install "D:\path\to\koishi-plugin-foxy-memory-bridge"
+corepack yarn add "koishi-plugin-foxy-memory-bridge@file:./koishi-plugin-foxy-memory-bridge-0.1.11.tgz"
 ```
 
-然后在 Koishi 控制台启用 `foxy-memory-bridge`。它依赖：
+Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `foxy-memory-bridge`。它依赖：
 
 - `koishi` ^4.18
 - `koishi-plugin-chatluna-livingmemory`（peer，未安装时插件不会加载）
@@ -39,7 +39,11 @@ npm install "D:\path\to\koishi-plugin-foxy-memory-bridge"
 | --- | --- | --- |
 | `path` | `/foxy-memory` | HTTP 路由前缀 |
 | `token` | 空 | Bearer token；留空时只允许本机回环访问 |
-| `presetId` | `foxy3（Character）` | 读写哪个 LivingMemory preset |
+| `presetKind` | `character` | `character` 用 Character 预设，`chatluna` 用主插件预设 |
+| `chatlunaPresetId` | `foxy3` | ChatLuna 主插件预设（动态下拉） |
+| `characterPresetId` | `foxy3` | Character 预设（动态下拉；自动补 `（Character）`） |
+| `presetId` | `foxy3（Character）` | 兼容旧配置；实际由上面两项计算 |
+| `extractModel` | `deepseek/deepseek-flash` | 批量提取记忆用的 ChatLuna 模型 |
 | `platform` | `dsh` | speakerKey 的平台名 |
 | `userId` | `2242711967` | 人类用户 ID（kunfox） |
 | `userLabel` | `kunfox` | 人类显示名 |
@@ -64,6 +68,25 @@ bridgePresetId: foxy3（Character）
 `bridgeUrl` 填到 `/foxy-memory` 为止，不要带 `/record`。配置后默认使用桥；桥失败会自动回退本地 JSONL，不会丢消息。
 
 ## API
+
+### `POST /foxy-memory/ingest`
+
+DSH 侧每积累一批消息后调用；桥用 `extractModel` 把对话提炼成中文、Foxy 第一人称的长期记忆，再逐条写入 LivingMemory。
+
+```json
+{
+  "sessionId": "session-...",
+  "presetId": "foxy3（Character）",
+  "messages": [
+    { "role": "user", "text": "昨天群里聊了什么？", "at": 1790000000000 },
+    { "role": "assistant", "text": "外设那摊，轨迹球和短屁股鼠标喵", "at": 1790000001000 }
+  ]
+}
+```
+
+返回 `{ ok, presetId, created, ids }`。空内容或模型判断没有值得长期保存的信息时返回 `created: 0`，不会写流水账。
+
+`/record` 仍保留，用于兼容旧版或手工写单条；新版 DSH 批处理只调用 `/ingest`。
 
 ### `POST /foxy-memory/record`
 
@@ -122,3 +145,4 @@ node test/test-bridge.cjs
 ## License
 
 MIT
+
