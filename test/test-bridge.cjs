@@ -31,7 +31,20 @@ async function main() {
     },
   }
 
-  const handlers = createHandlers({ service, config: { presetId: 'foxy3（Character）' } })
+  const chatluna = {
+    async createChatModel() {
+      return {
+        invoke: async () => ({
+          content: JSON.stringify({
+            memories: [
+              { type: 'fact', content: 'kunfox 说今天在调 Foxy 的记忆桥。', summary: 'kunfox 在调记忆桥', keywords: ['DSH', 'Foxy'], sentiment: '平静', importance: 0.6 },
+            ],
+          }),
+        }),
+      }
+    },
+  }
+  const handlers = createHandlers({ service, chatluna, config: { presetId: 'foxy3（Character）' } })
   assert.equal(handlers.path, '/foxy-memory')
   assert.equal(handlers.health().body.presetId, 'foxy3（Character）')
 
@@ -59,6 +72,17 @@ async function main() {
 
   const bad = await handlers.record({ role: 'system', text: 'x' })
   assert.equal(bad.status, 400)
+
+  const ingested = await handlers.ingest({
+    sessionId: 's1',
+    messages: [
+      { role: 'user', text: '今天在调 Foxy 的记忆桥。', at: Date.now() },
+      { role: 'assistant', text: '好，我记住啦。', at: Date.now() },
+    ],
+  })
+  assert.equal(ingested.status, 200)
+  assert.equal(ingested.body.created, 1)
+  assert.match(memories.at(-1).content, /^我记得在 DSH 私聊里，/)
 
   console.log('foxy-memory-bridge tests passed')
 }

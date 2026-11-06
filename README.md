@@ -25,7 +25,7 @@ Koishi 实例内：
 
 ```powershell
 cd C:\Users\MECHREV\AppData\Roaming\Koishi\Desktop\data\instances\default
-corepack yarn add "koishi-plugin-foxy-memory-bridge@file:./koishi-plugin-foxy-memory-bridge-0.1.11.tgz"
+corepack yarn add "koishi-plugin-foxy-memory-bridge@file:./koishi-plugin-foxy-memory-bridge-0.1.13.tgz"
 ```
 
 Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `foxy-memory-bridge`。它依赖：
@@ -71,7 +71,7 @@ bridgePresetId: foxy3（Character）
 
 ### `POST /foxy-memory/ingest`
 
-DSH 侧每积累一批消息后调用；桥用 `extractModel` 把对话提炼成中文、Foxy 第一人称的长期记忆，再逐条写入 LivingMemory。
+DSH 侧每积累一批消息后调用；桥用 `extractModel` 把对话提炼成中文、Foxy 第一人称的长期记忆，再逐条写入 LivingMemory。提示词会明确这是 **DSH 私聊**，生成的记忆以“我记得在 DSH 私聊里，……”开头，而不是“kunfox 说/回复”。
 
 ```json
 {
