@@ -2,7 +2,7 @@
 
 把 DSH 里 Foxy 的对话写入 ChatLuna [`koishi-plugin-chatluna-livingmemory`](https://github.com/Procyon-Nan/koishi-plugin-chatluna-livingmemory)，并在下一轮把记忆召回给 DSH。
 
-这是 `dsh-foxy-memory` 的可选桥。没有这个桥时，DSH 侧的 Foxy 仍然可以用本地 JSONL 记忆；装上桥之后，DSH 与 QQ 可以共用 `foxy3（Character）` 记忆池。
+这是 `dsh-foxy-memory` 的可选桥。没有这个桥时，DSH 侧的 Foxy 仍然可以用本地 JSONL 记忆；装上桥之后，DSH 与 QQ 可以共用 `chatluna-livingmemory` 记忆池。
 
 ## 链路
 
