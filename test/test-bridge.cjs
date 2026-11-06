@@ -1,0 +1,69 @@
+'use strict'
+
+const assert = require('node:assert/strict')
+const { createHandlers, speakerKey } = require('../lib/handlers')
+
+async function main() {
+  const calls = []
+  const memories = []
+
+  const service = {
+    createScope(...args) {
+      calls.push(['createScope', ...args])
+      return { conversationId: args[0], presetId: args[1], userId: args[2], channelId: args[3], options: args[4] }
+    },
+    async recordPresetSpeaker(scope, label) {
+      calls.push(['recordPresetSpeaker', scope, label])
+    },
+    async createMemory(scope, input, keys) {
+      calls.push(['createMemory', scope, input, keys])
+      const memory = { id: `mem-${memories.length + 1}`, createdAt: new Date().toISOString(), ...input }
+      memories.push(memory)
+      return memory
+    },
+    async searchMemories(presetId, input) {
+      calls.push(['searchMemories', presetId, input])
+      return memories.filter((memory) => memory.content.includes(input.searchTexts[0]))
+    },
+    async listMemories(query) {
+      calls.push(['listMemories', query])
+      return { items: memories, page: 1, pageSize: query.pageSize, total: memories.length }
+    },
+  }
+
+  const handlers = createHandlers({ service, config: { presetId: 'foxy3（Character）' } })
+  assert.equal(handlers.path, '/foxy-memory')
+  assert.equal(handlers.health().body.presetId, 'foxy3（Character）')
+
+  const recorded = await handlers.record({ role: 'user', text: 'kunfox 今天在 DSH 做了插件', sessionId: 's1' })
+  assert.equal(recorded.status, 200)
+  assert.equal(recorded.body.ok, true)
+  assert.equal(recorded.body.id, 'mem-1')
+  assert.equal(memories[0].type, 'context')
+  assert.match(memories[0].content, /kunfox 在 DSH 说/)
+  assert.deepEqual(memories[0].keywords, ['DSH', 'Foxy', 'kunfox'])
+  assert.equal(memories[0].importance, 0.6)
+
+  const createCall = calls.find((call) => call[0] === 'createMemory')
+  assert.equal(createCall[3][0], speakerKey('dsh', '2242711967'))
+
+  const context = await handlers.context({ query: '插件', limit: 5 })
+  assert.equal(context.status, 200)
+  assert.equal(context.body.count, 1)
+  assert.match(context.body.text, /\[DSH\]/)
+  assert.match(context.body.text, /kunfox 在 DSH 说/)
+
+  const empty = await handlers.context({ query: '不存在的关键词', limit: 5 })
+  assert.equal(empty.status, 200)
+  assert.equal(empty.body.count, 1, 'falls back to listMemories')
+
+  const bad = await handlers.record({ role: 'system', text: 'x' })
+  assert.equal(bad.status, 400)
+
+  console.log('foxy-memory-bridge tests passed')
+}
+
+main().catch((error) => {
+  console.error(error)
+  process.exitCode = 1
+})

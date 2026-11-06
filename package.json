@@ -1,0 +1,44 @@
+{
+  "name": "koishi-plugin-foxy-memory-bridge",
+  "version": "0.1.0",
+  "description": "HTTP bridge from DSH foxy-memory to ChatLuna LivingMemory.",
+  "main": "lib/index.js",
+  "files": [
+    "lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "test": "node test/test-bridge.cjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "koishi": "^4.18.0",
+    "koishi-plugin-chatluna-livingmemory": ">=0.31.0"
+  },
+  "koishi": {
+    "description": {
+      "zh": "把 DSH 的 Foxy 对话通过 HTTP 写入 ChatLuna LivingMemory，并读取召回。",
+      "en": "Write DSH Foxy turns into ChatLuna LivingMemory over HTTP and read recall."
+    }
+  },
+  "keywords": [
+    "koishi",
+    "chatluna",
+    "livingmemory",
+    "dsh",
+    "foxy"
+  ],
+  "author": "Kun-Fox",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kun-Fox/koishi-plugin-foxy-memory-bridge.git"
+  },
+  "homepage": "https://github.com/Kun-Fox/koishi-plugin-foxy-memory-bridge#readme",
+  "bugs": {
+    "url": "https://github.com/Kun-Fox/koishi-plugin-foxy-memory-bridge/issues"
+  }
+}
