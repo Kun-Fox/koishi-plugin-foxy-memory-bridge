@@ -50,7 +50,7 @@ async function main() {
   const context = await handlers.context({ query: '插件', limit: 5 })
   assert.equal(context.status, 200)
   assert.equal(context.body.count, 1)
-  assert.match(context.body.text, /\(DSH\)/)
+  assert.match(context.body.text, /DSH 平台/)
   assert.match(context.body.text, /kunfox 在 DSH 说/)
 
   const empty = await handlers.context({ query: '不存在的关键词', limit: 5 })
