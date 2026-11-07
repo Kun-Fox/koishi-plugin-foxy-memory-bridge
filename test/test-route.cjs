@@ -25,9 +25,19 @@ async function main() {
     async searchMemories() { return [] },
     async listMemories() { return { items: [], page: 1, pageSize: 20, total: 0 } },
   }
+  const sent = []
   const ctx = {
     logger: () => ({ info() {}, warn() {}, debug() {} }),
     chatluna_living_memory: service,
+    bots: [
+      {
+        selfId: '2877932816',
+        async sendPrivateMessage(userId, text) {
+          sent.push([userId, text])
+          return ['route-message-1']
+        },
+      },
+    ],
     server: {
       get(path, handler) { routes.set(`GET ${path}`, handler) },
       post(path, handler) { routes.set(`POST ${path}`, handler) },
@@ -37,6 +47,7 @@ async function main() {
   plugin.apply(ctx, { token: 'secret', presetId: 'foxy3（Character）' })
   assert.ok(routes.has('POST /foxy-memory/record'))
   assert.ok(routes.has('POST /foxy-memory/context'))
+  assert.ok(routes.has('POST /foxy-memory/send-private'))
   assert.ok(routes.has('GET /foxy-memory/health'))
 
   const unauthorized = { headers: {}, body: {}, status: 0 }
@@ -53,6 +64,16 @@ async function main() {
   assert.equal(koa.body.ok, true)
   assert.equal(koa.body.id, 'real-1')
   assert.equal(calls[0][0], 'createScope')
+
+  const privateKoa = {
+    headers: { authorization: 'Bearer secret' },
+    body: { userId: '10001', text: '来自路由的私聊' },
+    status: 0,
+  }
+  await routes.get('POST /foxy-memory/send-private')(privateKoa)
+  assert.equal(privateKoa.status, 200)
+  assert.equal(privateKoa.body.ok, true)
+  assert.deepEqual(sent[0], ['10001', '来自路由的私聊'])
 
   const health = { headers: {}, body: {}, status: 0 }
   routes.get('GET /foxy-memory/health')(health)

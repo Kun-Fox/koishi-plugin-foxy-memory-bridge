@@ -44,7 +44,17 @@ async function main() {
       }
     },
   }
-  const handlers = createHandlers({ service, chatluna, config: { presetId: 'foxy3（Character）' } })
+  const sent = []
+  const bots = [
+    {
+      selfId: '2877932816',
+      async sendPrivateMessage(userId, text) {
+        sent.push([userId, text])
+        return ['message-1']
+      },
+    },
+  ]
+  const handlers = createHandlers({ service, chatluna, bots, config: { presetId: 'foxy3（Character）' } })
   assert.equal(handlers.path, '/foxy-memory')
   assert.equal(handlers.health().body.presetId, 'foxy3（Character）')
 
@@ -83,6 +93,20 @@ async function main() {
   assert.equal(ingested.status, 200)
   assert.equal(ingested.body.created, 1)
   assert.match(memories.at(-1).content, /^我记得在 DSH 私聊里，/)
+
+  const direct = await handlers.sendPrivate({ text: '这个视频有点意思' })
+  assert.equal(direct.status, 200)
+  assert.equal(direct.body.ok, true)
+  assert.equal(direct.body.userId, '2242711967')
+  assert.deepEqual(direct.body.messageIds, ['message-1'])
+  assert.deepEqual(sent[0], ['2242711967', '这个视频有点意思'])
+
+  const directTarget = await handlers.sendPrivate({ userId: '10001', text: '私聊测试' })
+  assert.equal(directTarget.status, 200)
+  assert.equal(sent[1][0], '10001')
+
+  const noText = await handlers.sendPrivate({ userId: '10001' })
+  assert.equal(noText.status, 400)
 
   console.log('foxy-memory-bridge tests passed')
 }

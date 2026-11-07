@@ -4,6 +4,8 @@
 
 这是 `dsh-foxy-memory` 的可选桥。没有这个桥时，DSH 侧的 Foxy 仍然可以用本地 JSONL 记忆；装上桥之后，DSH 与 QQ 可以共用 `chatluna-livingmemory` 记忆池。
 
+从 0.1.15 起，桥还可以让 DSH 侧的 Foxy 通过 QQ 机器人主动发送私聊，用于 B 站视频分享等场景。
+
 ## 链路
 
 ```text
@@ -25,7 +27,7 @@ Koishi 实例内：
 
 ```powershell
 cd C:\Users\MECHREV\AppData\Roaming\Koishi\Desktop\data\instances\default
-corepack yarn add "koishi-plugin-foxy-memory-bridge@file:./koishi-plugin-foxy-memory-bridge-0.1.13.tgz"
+corepack yarn add "koishi-plugin-foxy-memory-bridge@file:./koishi-plugin-foxy-memory-bridge-0.1.15.tgz"
 ```
 
 Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `foxy-memory-bridge`。它依赖：
@@ -49,6 +51,7 @@ Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `fox
 | `userLabel` | `kunfox` | 人类显示名 |
 | `assistantId` | `2877932816` | Foxy 的 ID |
 | `assistantLabel` | `Foxy` | Foxy 显示名 |
+| `botId` | 空 | 发送私聊使用的机器人 selfId；留空优先 `assistantId` |
 | `conversationPrefix` | `dsh:` | 生成 conversationId 的前缀 |
 | `maxContext` | `20` | 单次最多返回多少条 |
 
@@ -117,6 +120,20 @@ kunfox 在 DSH 说：kunfox 今天在 DSH 做了插件
 { "ok": true, "count": 3, "text": "- [2026-11-06 20:00] [DSH] ...", "memories": [] }
 ```
 
+### `POST /foxy-memory/send-private`
+
+让 QQ 机器人给指定用户发一条私聊。DSH 侧用于把有趣的 B 站视频主动推给主人；发送成功后，DSH 侧会再写一条 `scene: "private"` 的私聊记忆。
+
+```json
+{
+  "userId": "2242711967",
+  "text": "我刷到一个视频，觉得你会喜欢。",
+  "selfId": "2877932816"
+}
+```
+
+`userId` 可省略，默认使用桥配置的 `userId`；`selfId` 可省略，优先 `botId`/`assistantId`。返回 `{ ok, userId, botId, messageIds }`。
+
 ### `GET /foxy-memory/health`
 
 返回 `{ ok, presetId, platform, path, service }`，可用于探活。
@@ -140,7 +157,9 @@ kunfox 在 DSH 说：kunfox 今天在 DSH 做了插件
 node test/test-bridge.cjs
 ```
 
-测试使用 mock LivingMemory service，不连接真实实例。
+测试使用 mock LivingMemory service 和 mock 机器人，不连接真实实例，也不会真的发 QQ。
+
+`test/test-route.cjs` 另外验证 HTTP 路由，包括 `/send-private`。
 
 ## License
 
