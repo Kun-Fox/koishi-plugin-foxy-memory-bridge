@@ -4,7 +4,7 @@
 
 这是 `dsh-foxy-memory` 的可选桥。没有这个桥时，DSH 侧的 Foxy 仍然可以用本地 JSONL 记忆；装上桥之后，DSH 与 QQ 可以共用 `chatluna-livingmemory` 记忆池。
 
-从 0.1.15 起，桥还可以让 DSH 侧的 Foxy 通过 QQ 机器人主动发送私聊，用于 B 站视频分享等场景。
+从 0.1.15 起，桥还可以让 DSH 侧的 Foxy 通过 QQ 机器人主动发送私聊，用于 B 站视频分享等场景；0.1.16 起，事件会携带 `platform / channelType / channelId / eventType`，记忆不再被强行改写成“我刷到”。
 
 ## 链路
 
@@ -27,7 +27,7 @@ Koishi 实例内：
 
 ```powershell
 cd C:\Users\MECHREV\AppData\Roaming\Koishi\Desktop\data\instances\default
-corepack yarn add "koishi-plugin-foxy-memory-bridge@file:./koishi-plugin-foxy-memory-bridge-0.1.15.tgz"
+corepack yarn add "koishi-plugin-foxy-memory-bridge@file:./koishi-plugin-foxy-memory-bridge-0.1.16.tgz"
 ```
 
 Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `foxy-memory-bridge`。它依赖：
@@ -74,7 +74,7 @@ bridgePresetId: foxy3（Character）
 
 ### `POST /foxy-memory/ingest`
 
-DSH 侧每积累一批消息后调用；桥用 `extractModel` 把对话提炼成中文、Foxy 第一人称的长期记忆，再逐条写入 LivingMemory。提示词会明确这是 **DSH 私聊**，生成的记忆以“我记得在 DSH 私聊里，……”开头，而不是“kunfox 说/回复”。
+DSH 侧每积累一批消息后调用；桥用 `extractModel` 把对话提炼成中文、Foxy 第一人称的长期记忆，再逐条写入 LivingMemory。请求可带 `platform / channelType / channelId / eventType / sourceLabel`，桥会按真实事件类型记录，不再把所有场景强行改写成“我刷到”。
 
 ```json
 {

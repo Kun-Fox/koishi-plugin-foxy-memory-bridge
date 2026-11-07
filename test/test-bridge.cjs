@@ -63,8 +63,8 @@ async function main() {
   assert.equal(recorded.body.ok, true)
   assert.equal(recorded.body.id, 'mem-1')
   assert.equal(memories[0].type, 'context')
-  assert.match(memories[0].content, /kunfox 在 DSH 说/)
-  assert.deepEqual(memories[0].keywords, ['DSH', 'Foxy', 'kunfox'])
+  assert.match(memories[0].content, /kunfox 在 DSH 私聊 说/)
+  assert.deepEqual(memories[0].keywords, ['dsh', 'DSH 私聊', 'Foxy', 'kunfox'])
   assert.equal(memories[0].importance, 0.6)
 
   const createCall = calls.find((call) => call[0] === 'createMemory')
@@ -73,8 +73,8 @@ async function main() {
   const context = await handlers.context({ query: '插件', limit: 5 })
   assert.equal(context.status, 200)
   assert.equal(context.body.count, 1)
-  assert.match(context.body.text, /DSH 平台/)
-  assert.match(context.body.text, /kunfox 在 DSH 说/)
+  assert.match(context.body.text, /DSH 私聊 平台/)
+  assert.match(context.body.text, /kunfox 在 DSH 私聊 说/)
 
   const empty = await handlers.context({ query: '不存在的关键词', limit: 5 })
   assert.equal(empty.status, 200)
