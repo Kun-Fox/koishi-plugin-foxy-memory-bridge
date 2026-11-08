@@ -1,6 +1,6 @@
 {
   "name": "koishi-plugin-foxy-memory-bridge",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "HTTP bridge from DSH foxy-memory to ChatLuna LivingMemory.",
   "main": "lib/index.js",
   "files": [

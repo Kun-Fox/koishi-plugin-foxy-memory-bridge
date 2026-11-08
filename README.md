@@ -54,8 +54,11 @@ Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `fox
 | `botId` | 空 | 发送私聊使用的机器人 selfId；留空优先 `assistantId` |
 | `conversationPrefix` | `dsh:` | 生成 conversationId 的前缀 |
 | `maxContext` | `20` | 单次最多返回多少条 |
+| `standalonePort` | `0` | 大于 0 时额外监听独立端口，避免 Koishi Console 的 SPA 路由吞掉 `/foxy-memory/*` |
 
 公网/局域网部署时务必设置 `token`。留空只适合 DSH 与 Koishi 在同一台机器。
+
+如果 Koishi Console 先注册了 SPA 路由导致 `/foxy-memory/health` 返回控制台 HTML，把 `standalonePort` 设为 `5141`，DSH 侧把 `bridgeUrl` 改为 `http://127.0.0.1:5141/foxy-memory`。
 
 ## DSH 侧配置
 
