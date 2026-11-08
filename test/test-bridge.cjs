@@ -92,7 +92,8 @@ async function main() {
   })
   assert.equal(ingested.status, 200)
   assert.equal(ingested.body.created, 1)
-  assert.match(memories.at(-1).content, /^我记得在 DSH 私聊里，/)
+  assert.match(memories.at(-1).content, /^kunfox 说今天在调 Foxy 的记忆桥。/)
+  assert.doesNotMatch(memories.at(-1).content, /我记得|DSH 私聊/)
 
   const direct = await handlers.sendPrivate({ text: '这个视频有点意思' })
   assert.equal(direct.status, 200)
