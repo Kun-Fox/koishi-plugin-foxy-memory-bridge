@@ -42,13 +42,13 @@ Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `fox
 | `path` | `/foxy-memory` | HTTP 路由前缀 |
 | `token` | 空 | Bearer token；留空时只允许本机回环访问 |
 | `presetKind` | `character` | `character` 用 Character 预设，`chatluna` 用主插件预设 |
-| `chatlunaPresetId` | `foxy3` | ChatLuna 主插件预设（动态下拉） |
-| `characterPresetId` | `foxy3` | Character 预设（动态下拉；自动补 `（Character）`） |
-| `presetId` | `foxy3（Character）` | 兼容旧配置；实际由上面两项计算 |
+| `chatlunaPresetId` | `preset` | ChatLuna 主插件预设（动态下拉） |
+| `characterPresetId` | `preset` | Character 预设（动态下拉；自动补 `（Character）`） |
+| `presetId` | `preset（Character）` | 兼容旧配置；实际由上面两项计算 |
 | `extractModel` | `deepseek/deepseek-flash` | 批量提取记忆用的 ChatLuna 模型 |
 | `platform` | `dsh` | speakerKey 的平台名 |
-| `userId` | `2242711967` | 人类用户 ID（kunfox） |
-| `userLabel` | `kunfox` | 人类显示名 |
+| `userId` | `10001` | 人类用户 ID（用户） |
+| `userLabel` | `用户` | 人类显示名 |
 | `assistantId` | `2877932816` | Foxy 的 ID |
 | `assistantLabel` | `Foxy` | Foxy 显示名 |
 | `botId` | 空 | 发送私聊使用的机器人 selfId；留空优先 `assistantId` |
@@ -68,7 +68,7 @@ Yarn 4 必须写成 `包名@file:路径`；装完在 Koishi 控制台启用 `fox
 provider: livingmemory
 bridgeUrl: http://127.0.0.1:5140/foxy-memory
 bridgeToken: 与桥的 token 相同
-bridgePresetId: foxy3（Character）
+bridgePresetId: preset（Character）
 ```
 
 `bridgeUrl` 填到 `/foxy-memory` 为止，不要带 `/record`。配置后默认使用桥；桥失败会自动回退本地 JSONL，不会丢消息。
@@ -82,7 +82,7 @@ DSH 侧每积累一批消息后调用；桥用 `extractModel` 把对话提炼成
 ```json
 {
   "sessionId": "session-...",
-  "presetId": "foxy3（Character）",
+  "presetId": "preset（Character）",
   "messages": [
     { "role": "user", "text": "昨天群里聊了什么？", "at": 1790000000000 },
     { "role": "assistant", "text": "外设那摊，轨迹球和短屁股鼠标喵", "at": 1790000001000 }
@@ -99,22 +99,22 @@ DSH 侧每积累一批消息后调用；桥用 `extractModel` 把对话提炼成
 ```json
 {
   "role": "user",
-  "text": "kunfox 今天在 DSH 做了插件",
+  "text": "用户 今天在 DSH 做了插件",
   "sessionId": "session-...",
-  "presetId": "foxy3（Character）"
+  "presetId": "preset（Character）"
 }
 ```
 
 写一条 `type: "context"` 的记忆，content 形如：
 
 ```text
-kunfox 在 DSH 说：kunfox 今天在 DSH 做了插件
+用户 在 DSH 说：用户 今天在 DSH 做了插件
 ```
 
 ### `POST /foxy-memory/context`
 
 ```json
-{ "query": "DSH 插件", "limit": 20, "presetId": "foxy3（Character）" }
+{ "query": "DSH 插件", "limit": 20, "presetId": "preset（Character）" }
 ```
 
 返回：
@@ -129,7 +129,7 @@ kunfox 在 DSH 说：kunfox 今天在 DSH 做了插件
 
 ```json
 {
-  "userId": "2242711967",
+  "userId": "10001",
   "text": "我刷到一个视频，觉得你会喜欢。",
   "selfId": "2877932816"
 }
@@ -149,7 +149,7 @@ kunfox 在 DSH 说：kunfox 今天在 DSH 做了插件
 
 ## 限制
 
-- 写入依赖 LivingMemory 的 `createMemory`，所以必须是有效 preset；`foxy3（Character）` 不存在时会返回 500 和提示。
+- 写入依赖 LivingMemory 的 `createMemory`，所以必须是有效 preset；`preset（Character）` 不存在时会返回 500 和提示。
 - 召回走 `searchMemories`，向量索引未建立时可能为空，此时桥退回 `listMemories` 最近记录。
 - 记忆内容按“DSH 侧的一句话”写入，不做 LLM 摘要/合并；这与 LivingMemory 的 Dream/摘要流程是互补的。
 - 桥只处理 Foxy 的 DSH 对话；QQ 侧仍由 ChatLuna 原管线负责。
