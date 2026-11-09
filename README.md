@@ -1,10 +1,18 @@
 # koishi-plugin-foxy-memory-bridge
 
-把 DSH 里 Foxy 的对话写入 ChatLuna [`koishi-plugin-chatluna-livingmemory`](https://github.com/Procyon-Nan/koishi-plugin-chatluna-livingmemory)，并在下一轮把记忆召回给 DSH。
+> **DEPRECATED / 已停止维护**
+>
+> 本插件已被 [`koishi-plugin-chatluna-foxy-memory`](https://github.com/Kun-Fox/koishi-plugin-chatluna-foxy-memory) 取代，不再增加新功能，也不再做兼容性修复。
+>
+> 新部署请直接使用 `koishi-plugin-chatluna-foxy-memory`；它保留 `chatluna_living_memory` 兼容服务名，并提供 `/foxy-memory/*` HTTP API。已有部署请先导出旧记忆，再导入新插件，确认对账后停用本桥。迁移说明见新插件 README 的“迁移旧数据”一节。
+>
+> 本 README 仅作为历史实现与迁移参考保留。
 
-这是 `dsh-foxy-memory` 的可选桥。没有这个桥时，DSH 侧的 Foxy 仍然可以用本地 JSONL 记忆；装上桥之后，DSH 与 QQ 可以共用 `chatluna-livingmemory` 记忆池。
+把 DSH 里 Foxy 的对话写入 ChatLuna LivingMemory，并在下一轮把记忆召回给 DSH。
 
-从 0.1.15 起，桥还可以让 DSH 侧的 Foxy 通过 QQ 机器人主动发送私聊，用于 B 站视频分享等场景；0.1.16 起，事件会携带 `platform / channelType / channelId / eventType`，记忆不再被强行改写成“我刷到”。
+这是 `dsh-foxy-memory` 的旧可选桥，依赖已退役的 `koishi-plugin-chatluna-livingmemory`。新插件已内置等价的 DSH HTTP 直连接口，不需要再运行本桥。
+
+从 0.1.15 起，桥还可以让 DSH 侧的 Foxy 通过 QQ 机器人主动发送私聊；0.1.16 起，事件会携带 `platform / channelType / channelId / eventType`，记忆不再被强行改写。这些能力现已由新插件的 `/foxy-memory/send-private` 与事件化记忆接口承接。
 
 ## 链路
 
