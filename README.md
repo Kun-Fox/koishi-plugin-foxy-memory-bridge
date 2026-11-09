@@ -1,12 +1,10 @@
 # koishi-plugin-foxy-memory-bridge
 
-> **DEPRECATED / 已停止维护**
+> **兼容保留 / Legacy**
 >
-> 本插件已被 [`koishi-plugin-chatluna-foxy-memory`](https://github.com/Kun-Fox/koishi-plugin-chatluna-foxy-memory) 取代，不再增加新功能，也不再做兼容性修复。
+> 本插件不再增加新功能，但仍保留在 npm 与 Koishi 插件市场，已有部署可以继续安装和使用。
 >
-> 新部署请直接使用 `koishi-plugin-chatluna-foxy-memory`；它保留 `chatluna_living_memory` 兼容服务名，并提供 `/foxy-memory/*` HTTP API。已有部署请先导出旧记忆，再导入新插件，确认对账后停用本桥。迁移说明见新插件 README 的“迁移旧数据”一节。
->
-> 本 README 仅作为历史实现与迁移参考保留。
+> 新部署建议使用 [`koishi-plugin-chatluna-foxy-memory`](https://github.com/Kun-Fox/koishi-plugin-chatluna-foxy-memory)；它保留 `chatluna_living_memory` 兼容服务名，并提供 `/foxy-memory/*` HTTP API。迁移说明见新插件 README 的“迁移旧数据”一节。
 
 把 DSH 里 Foxy 的对话写入 ChatLuna LivingMemory，并在下一轮把记忆召回给 DSH。
 

@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-foxy-memory-bridge",
-  "version": "0.1.19",
-  "description": "[DEPRECATED] Legacy HTTP bridge from DSH foxy-memory to ChatLuna LivingMemory. Replaced by koishi-plugin-chatluna-foxy-memory.",
+  "version": "0.1.20",
+  "description": "[LEGACY] HTTP bridge from DSH foxy-memory to ChatLuna LivingMemory; kept for existing deployments. New deployments should use koishi-plugin-chatluna-foxy-memory.",
   "main": "lib/index.js",
   "files": [
     "lib",
@@ -20,8 +20,8 @@
   },
   "koishi": {
     "description": {
-      "zh": "[已停止维护] 旧版 DSH 与 ChatLuna LivingMemory 的记忆桥，已被 koishi-plugin-chatluna-foxy-memory 取代。",
-      "en": "[DEPRECATED] Legacy memory bridge between DSH and ChatLuna LivingMemory. Replaced by koishi-plugin-chatluna-foxy-memory."
+      "zh": "兼容保留的旧版 DSH 与 ChatLuna LivingMemory 记忆桥；已有部署可继续使用，新部署建议使用 koishi-plugin-chatluna-foxy-memory。",
+      "en": "Legacy memory bridge between DSH and ChatLuna LivingMemory; kept for existing deployments. New deployments should use koishi-plugin-chatluna-foxy-memory."
     }
   },
   "keywords": [
